@@ -1113,8 +1113,8 @@ def reverse_azimuth(azi: float, radians: bool = False) -> float:
     float
         the reversed azimuth (forward <-> backwards)
     """
-    f = math.pi if radians else 180.0
-    return azi - f if azi > 0 else azi + f
+    factor = math.pi if radians else 180.0
+    return azi - factor if azi > 0 else azi + factor
 
 
 def reverse_azimuth_arr(arr: Any, radians: bool = False):
@@ -1129,5 +1129,5 @@ def reverse_azimuth_arr(arr: Any, radians: bool = False):
         If True, the input data is assumed to be in radians.
         Otherwise, the data is assumed to be in degrees.
     """
-    for i in range(len(arr)):
-        arr[i] = reverse_azimuth(arr[i], radians=radians)
+    for idx, item in enumerate(arr):
+        arr[idx] = reverse_azimuth(item, radians=radians)
