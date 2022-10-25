@@ -189,6 +189,7 @@ def test_geod_inverse_transform():
             initial_idx=0,
             terminus_idx=0,
             flags=flags,
+            return_back_azimuth=False,
         )
         assert res.npts == point_count
         assert_almost_equal(res.del_s, del_s)
@@ -217,6 +218,7 @@ def test_geod_inverse_transform():
             initial_idx=0,
             terminus_idx=0,
             flags=flags,
+            return_back_azimuth=False,
         )
         assert res.npts == point_count
         assert_almost_equal(res.del_s, del_s)
@@ -279,6 +281,7 @@ def test_geod_inverse_transform():
             initial_idx=0,
             terminus_idx=0,
             flags=flags,
+            return_back_azimuth=False,
         )
         assert res.npts == point_count
         assert_almost_equal(res.del_s, del_s)
