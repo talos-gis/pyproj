@@ -4,6 +4,7 @@ Utility functions used within pyproj
 import json
 from array import array
 from enum import Enum, auto
+from math import pi
 from typing import Any, Tuple
 
 
@@ -151,3 +152,40 @@ def _convertback(data_type: DataType, inx: Any) -> Any:
     if data_type == DataType.TUPLE:
         return tuple(inx)
     return inx
+
+
+def reverse_azimuth(azi: float, radians: bool = False) -> float:
+    """
+    Reverses the given azimuth (forward <-> backwards)
+
+    Parameters
+    ----------
+    azi: float
+        azimuth
+    radians: bool, default=False
+        If True, the input data is assumed to be in radians.
+        Otherwise, the data is assumed to be in degrees.
+
+    Returns
+    -------
+    float
+        the reversed azimuth (forward <-> backwards)
+    """
+    f = pi if radians else 180.0
+    return azi - f if azi > 0 else azi + f
+
+
+def reverse_azimuth_arr(arr: Any, radians: bool = False):
+    """
+    Reverses the given azimuth (forward <-> backwards) inplace for the given array
+
+    Parameters
+    ----------
+    arr: array, :class:`numpy.ndarray`
+        azimuth
+    radians: bool, default=False
+        If True, the input data is assumed to be in radians.
+        Otherwise, the data is assumed to be in degrees.
+    """
+    for i in range(len(arr)):
+        arr[i] = reverse_azimuth(arr[i], radians=radians)
