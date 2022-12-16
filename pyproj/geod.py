@@ -325,6 +325,7 @@ class Geod(_Geod):
         lats2: Any,
         radians: bool = False,
         inplace: bool = False,
+        return_back_azimuth: bool = True,
     ) -> Tuple[Any, Any, Any]:
         """
         Inverse transformation
@@ -333,6 +334,7 @@ class Geod(_Geod):
         between initial points and terminus points.
 
         .. versionadded:: 3.5.0 inplace
+        .. versionadded:: 3.5.0 return_back_azimuth
 
         Accepted numeric scalar or array:
 
@@ -364,13 +366,16 @@ class Geod(_Geod):
             If True, will attempt to write the results to the input array
             instead of returning a new array. This will fail if the input
             is not an array in C order with the double data type.
+        return_back_azimuth: bool, default=True
+            if True, the third return value will be the back azimuth,
+            Otherwise, it will be the forward azimuth.
 
         Returns
         -------
         scalar or array:
             Forward azimuth(s)
         scalar or array:
-            Back azimuth(s)
+            Back azimuth(s) or Forward azimuth(s)
         scalar or array:
             Distance(s) between initial and terminus point(s)
             in meters
@@ -380,7 +385,9 @@ class Geod(_Geod):
         iny, y_data_type = _copytobuffer(lats1, inplace=inplace)
         inz, z_data_type = _copytobuffer(lons2, inplace=inplace)
         ind = _copytobuffer(lats2, inplace=inplace)[0]
-        self._inv(inx, iny, inz, ind, radians=radians)
+        self._inv(
+            inx, iny, inz, ind, radians=radians, return_back_azimuth=return_back_azimuth
+        )
         # if inputs were lists, tuples or floats, convert back.
         outx = _convertback(x_data_type, inx)
         outy = _convertback(y_data_type, iny)
@@ -514,7 +521,7 @@ class Geod(_Geod):
         out_lons: Optional[Any] = None,
         out_lats: Optional[Any] = None,
         out_azis: Optional[Any] = None,
-        return_back_azimuth: bool = False,
+        return_back_azimuth: bool = True,
     ) -> GeodIntermediateReturn:
         """
         .. versionadded:: 3.1.0
@@ -627,7 +634,7 @@ class Geod(_Geod):
             az12(s) of the intermediate point(s)
             If None then buffers would be allocated internnaly
             unless requested otherwise by the flags
-        return_back_azimuth: bool, default=False
+        return_back_azimuth: bool, default=True
             if True, out_azis will store the back azimuth,
             Otherwise, out_azis will store the forward azimuth.
 
@@ -667,7 +674,7 @@ class Geod(_Geod):
         out_lons: Optional[Any] = None,
         out_lats: Optional[Any] = None,
         out_azis: Optional[Any] = None,
-        return_back_azimuth: bool = False,
+        return_back_azimuth: bool = True,
     ) -> GeodIntermediateReturn:
         """
         .. versionadded:: 3.1.0
@@ -765,7 +772,7 @@ class Geod(_Geod):
             az12(s) of the intermediate point(s)
             If None then buffers would be allocated internnaly
             unless requested otherwise by the flags
-        return_back_azimuth: bool, default=False
+        return_back_azimuth: bool, default=True
             if True, out_azis will store the back azimuth,
             Otherwise, out_azis will store the forward azimuth.
 
@@ -1087,3 +1094,40 @@ class Geod(_Geod):
             return False
 
         return self.__repr__() == other.__repr__()
+
+
+def reverse_azimuth(azi: float, radians: bool = False) -> float:
+    """
+    Reverses the given azimuth (forward <-> backwards)
+
+    Parameters
+    ----------
+    azi: float
+        azimuth
+    radians: bool, default=False
+        If True, the input data is assumed to be in radians.
+        Otherwise, the data is assumed to be in degrees.
+
+    Returns
+    -------
+    float
+        the reversed azimuth (forward <-> backwards)
+    """
+    f = math.pi if radians else 180.0
+    return azi - f if azi > 0 else azi + f
+
+
+def reverse_azimuth_arr(arr: Any, radians: bool = False):
+    """
+    Reverses the given azimuth (forward <-> backwards) inplace for the given array
+
+    Parameters
+    ----------
+    arr: array, :class:`numpy.ndarray`
+        azimuth
+    radians: bool, default=False
+        If True, the input data is assumed to be in radians.
+        Otherwise, the data is assumed to be in degrees.
+    """
+    for i in range(len(arr)):
+        arr[i] = reverse_azimuth(arr[i], radians=radians)

@@ -12,8 +12,7 @@ import pytest
 from numpy.testing import assert_almost_equal
 
 from pyproj import Geod
-from pyproj.geod import GeodIntermediateFlag
-from pyproj.utils import reverse_azimuth_arr
+from pyproj.geod import GeodIntermediateFlag, reverse_azimuth_arr
 
 try:
     from shapely.geometry import (
@@ -167,6 +166,7 @@ def test_geod_inverse_transform():
         npts=point_count,
         initial_idx=0,
         terminus_idx=0,
+        return_back_azimuth=False,
     )
     assert res.npts == point_count
     assert_almost_equal(res.del_s, del_s)

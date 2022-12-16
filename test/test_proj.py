@@ -13,7 +13,7 @@ from numpy.testing import assert_almost_equal
 import pyproj
 from pyproj import Geod, Proj, pj_ellps, pj_list, transform
 from pyproj.exceptions import CRSError, ProjError
-from pyproj.utils import reverse_azimuth
+from pyproj.geod import reverse_azimuth
 from test.conftest import proj_network_env
 
 
