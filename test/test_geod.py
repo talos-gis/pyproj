@@ -13,6 +13,7 @@ from numpy.testing import assert_almost_equal
 
 from pyproj import Geod
 from pyproj.geod import GeodIntermediateFlag
+from pyproj.utils import reverse_azimuth_arr
 
 try:
     from shapely.geometry import (
@@ -230,27 +231,35 @@ def test_geod_inverse_transform():
             assert_almost_equal(res.azis, azis_a)
 
     print("test fwd_intermediate")
-    res = gg.fwd_intermediate(
-        out_lons=lons_b,
-        out_lats=lats_b,
-        out_azis=azis_b,
-        lon1=lon1pt,
-        lat1=lat1pt,
-        azi1=true_az12,
-        npts=point_count,
-        del_s=del_s,
-        initial_idx=0,
-        terminus_idx=0,
-    )
-    assert res.npts == point_count
-    assert_almost_equal(res.del_s, del_s)
-    assert_almost_equal(res.dist, dist)
-    assert_almost_equal(res.lons, lons_a)
-    assert_almost_equal(res.lats, lats_a)
-    assert_almost_equal(res.azis, azis_a)
-    assert res.lons is lons_b
-    assert res.lats is lats_b
-    assert res.azis is azis_b
+    for return_back_azimuth in [False, True]:
+        lons_b = np.empty(point_count)
+        lats_b = np.empty(point_count)
+        azis_b = np.empty(point_count)
+
+        res = gg.fwd_intermediate(
+            out_lons=lons_b,
+            out_lats=lats_b,
+            out_azis=azis_b,
+            lon1=lon1pt,
+            lat1=lat1pt,
+            azi1=true_az12,
+            npts=point_count,
+            del_s=del_s,
+            initial_idx=0,
+            terminus_idx=0,
+            return_back_azimuth=return_back_azimuth,
+        )
+        assert res.npts == point_count
+        assert_almost_equal(res.del_s, del_s)
+        assert_almost_equal(res.dist, dist)
+        assert_almost_equal(res.lons, lons_a)
+        assert_almost_equal(res.lats, lats_a)
+        if return_back_azimuth:
+            reverse_azimuth_arr(azis_b)
+        assert_almost_equal(res.azis, azis_a)
+        assert res.lons is lons_b
+        assert res.lats is lats_b
+        assert res.azis is azis_b
 
     print("test inv_intermediate (by del_s)")
     for del_s_fact, flags in (

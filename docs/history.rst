@@ -4,6 +4,10 @@ Change Log
 Latest
 ------
 
+3.5.0
+-----
+- ENH: Add `return_back_azimuth: bool` to allow compatibility between the azimuth output of `fwd` and `fwd_intermediate` (issue #1163)
+
 3.4.1
 -----
 - WHL: Add win32 to build_wheels matrix (pull #1169)

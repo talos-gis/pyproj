@@ -221,6 +221,7 @@ cdef class Geod:
         object out_lons,
         object out_lats,
         object out_azis,
+        bint return_back_azimuth,
     ) -> GeodIntermediateReturn:
         """
         .. versionadded:: 3.1.0
@@ -312,6 +313,11 @@ cdef class Geod:
                 lats_buff.data[iii] = plat2
                 lons_buff.data[iii] = plon2
                 if store_az:
+                    if return_back_azimuth:
+                        if pazi2 > 0:
+                            pazi2 = pazi2 - 180.
+                        elif pazi2 <= 0:
+                            pazi2 = pazi2 + 180.
                     azis_buff.data[iii] = pazi2
 
         return GeodIntermediateReturn(
