@@ -14,6 +14,7 @@ __all__ = [
     "geodesic_version_str",
     "GeodIntermediateFlag",
     "GeodIntermediateReturn",
+    "reverse_azimuth",
 ]
 
 import math
@@ -369,15 +370,15 @@ class Geod(_Geod):
             instead of returning a new array. This will fail if the input
             is not an array in C order with the double data type.
         return_back_azimuth: bool, default=True
-            if True, the third return value will be the back azimuth,
-            Otherwise, it will be the forward azimuth.
+            if True, the second return value (azi21) will be the back azimuth
+            (flipped 180 degrees), Otherwise, it will be also a forward azimuth.
 
         Returns
         -------
         scalar or array:
-            Forward azimuth(s)
+            Forward azimuth(s) (azi12)
         scalar or array:
-            Back azimuth(s) or Forward azimuth(s)
+            Back azimuth(s) or Forward azimuth(s) (azi21)
         scalar or array:
             Distance(s) between initial and terminus point(s)
             in meters
@@ -1116,38 +1117,47 @@ class Geod(_Geod):
         return self.__repr__() == other.__repr__()
 
 
-def reverse_azimuth(azi: float, radians: bool = False) -> float:
-    """
-    Reverses the given azimuth (forward <-> backwards)
+try:
+    import numpy as np  # type: ignore  # pylint: disable=import-outside-toplevel
 
-    Parameters
-    ----------
-    azi: float
-        azimuth
-    radians: bool, default=False
-        If True, the input data is assumed to be in radians.
-        Otherwise, the data is assumed to be in degrees.
+    def reverse_azimuth(azi: Any, radians: bool = False) -> Any:
+        """
+        Reverses the given azimuth (forward <-> backwards)
 
-    Returns
-    -------
-    float
-        the reversed azimuth (forward <-> backwards)
-    """
-    factor = math.pi if radians else 180.0
-    return azi - factor if azi > 0 else azi + factor
+        Parameters
+        ----------
+        azi: float or array, :class:`numpy.ndarray`
+            azimuth
+        radians: bool, default=False
+            If True, the input data is assumed to be in radians.
+            Otherwise, the data is assumed to be in degrees.
 
+        Returns
+        -------
+        float or array, :class:`numpy.ndarray`
+            the reversed azimuth (forward <-> backwards)
+        """
+        factor = math.pi if radians else 180.0
+        return azi - np.copysign(factor, azi)
 
-def reverse_azimuth_arr(arr: Any, radians: bool = False):
-    """
-    Reverses the given azimuth (forward <-> backwards) inplace for the given array
+except ImportError:
 
-    Parameters
-    ----------
-    arr: array, :class:`numpy.ndarray`
-        azimuth
-    radians: bool, default=False
-        If True, the input data is assumed to be in radians.
-        Otherwise, the data is assumed to be in degrees.
-    """
-    for idx, item in enumerate(arr):
-        arr[idx] = reverse_azimuth(item, radians=radians)
+    def reverse_azimuth(azi: Any, radians: bool = False) -> Any:
+        """
+        Reverses the given azimuth (forward <-> backwards)
+
+        Parameters
+        ----------
+        azi: float
+            azimuth
+        radians: bool, default=False
+            If True, the input data is assumed to be in radians.
+            Otherwise, the data is assumed to be in degrees.
+
+        Returns
+        -------
+        float
+            the reversed azimuth (forward <-> backwards)
+        """
+        factor = math.pi if radians else 180.0
+        return azi - math.copysign(factor, azi)

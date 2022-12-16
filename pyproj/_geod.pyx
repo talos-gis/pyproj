@@ -162,10 +162,11 @@ cdef class Geod:
         bint return_back_azimuth=True,
     ):
         """
-        inverse transformation - return forward and back azimuths, plus distance
+        inverse transformation - return forward azimuth (azi12) and back azimuths (azi21), plus distance
         between an initial and terminus lat/lon pair.
         if radians=True, lons/lats are radians instead of degree
-        if return_back_azimuth=True, the return azimuth will be the forward azimuth instead of the forward azimuth.
+        if return_back_azimuth=True, azi21 is a back azimuth (180 degrees flipped),
+        otherwise azi21 is also a forward azimuth.
         """
         cdef PyBuffWriteManager lon1buff = PyBuffWriteManager(lons1)
         cdef PyBuffWriteManager lat1buff = PyBuffWriteManager(lats1)
