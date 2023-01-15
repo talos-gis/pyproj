@@ -24,7 +24,7 @@ Here are some examples of initialization.
 
     >>> from pyproj import CRS
     >>> crs = CRS.from_epsg(4326)
-    >>> crs = CRS.from_string("epsg:4326")
+    >>> crs = CRS.from_string("EPSG:4326")
     >>> crs = CRS.from_proj4("+proj=latlon")
     >>> crs = CRS.from_user_input(4326)
 
@@ -175,7 +175,8 @@ This is just a small subset of what is available.
     - Ellipsoid: undefined
     - Prime Meridian: undefined
     ]
-    >>> print(crs.sub_crs_list[0].coordinate_operation.to_wkt(pretty=True))
+    >>> cop = crs.sub_crs_list[0].coordinate_operation
+    >>> print(cop.to_wkt(pretty=True))
     CONVERSION["Finland Uniform Coordinate System",
         METHOD["Transverse Mercator",
             ID["EPSG",9807]],
@@ -372,7 +373,7 @@ Step 2: Create Transformer to convert from geodetic CRS to CRS
 ----------------------------
 
 .. note:: If you are doing a transformation with a CRS that is time based,
-    it is recommended to include the time in the transformaton operation.
+    it is recommended to include the time in the transformation operation.
 
 
 .. code:: python
@@ -406,7 +407,7 @@ ellipsoid name as well as deriving one using a :class:`pyproj.crs.CRS`.
     >>> geod_clrk = Geod(ellps='clrk66') # Use Clarke 1866 ellipsoid.
     >>> geod_clrk
     Geod(ellps='clrk66')
-    >>> geod_wgs84 = CRS("epsg:4326").get_geod()
+    >>> geod_wgs84 = CRS("EPSG:4326").get_geod()
     >>> geod_wgs84
     Geod('+a=6378137 +f=0.0033528106647475126')
 

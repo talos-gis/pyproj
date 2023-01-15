@@ -30,6 +30,15 @@ DerivedGeographicCRS
     :special-members: __init__
 
 
+GeocentricCRS
+------------------------
+
+.. autoclass:: pyproj.crs.GeocentricCRS
+    :members:
+    :show-inheritance:
+    :special-members: __init__
+
+
 ProjectedCRS
 -----------------------
 
@@ -60,6 +69,15 @@ CompoundCRS
 -----------------------
 
 .. autoclass:: pyproj.crs.CompoundCRS
+    :members:
+    :show-inheritance:
+    :special-members: __init__
+
+
+CustomConstructorCRS
+------------------------
+
+.. autoclass:: pyproj.crs.CustomConstructorCRS
     :members:
     :show-inheritance:
     :special-members: __init__
